@@ -6,7 +6,10 @@ import {BirdWatcher} from "../src/BirdWatcher.sol";
 import {AutomationBase} from "../src/lib/AutomationBase.sol";
 import {AutomationCompatibleInterface} from "../src/lib/AutomationCompatibleInterface.sol";
 import {IBirds, IBirdsObservations} from "../src/lib/BirdsInterfaces.sol";
+import {ERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/ERC20.sol";
+import {ERC721} from "@openzeppelin-contracts-5.6.1/token/ERC721/ERC721.sol";
 import {IERC1155Receiver, IERC165} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
+import {Ownable} from "@openzeppelin-contracts-5.6.1/access/Ownable.sol";
 
 contract MockBirds is IBirds {
     bool public birdsDeparted;
@@ -57,6 +60,22 @@ contract MockBirdObservations is IBirdsObservations {
 contract RejectEth {
     receive() external payable {
         revert("reject eth");
+    }
+}
+
+contract MockERC20 is ERC20 {
+    constructor() ERC20("Mock Token", "MOCK") {}
+
+    function mint(address account, uint256 amount) external {
+        _mint(account, amount);
+    }
+}
+
+contract MockERC721 is ERC721 {
+    constructor() ERC721("Mock NFT", "MNFT") {}
+
+    function mint(address to, uint256 tokenId) external {
+        _mint(to, tokenId);
     }
 }
 
@@ -250,6 +269,48 @@ contract BirdWatcherTest is Test {
         vm.prank(OWNER);
         vm.expectRevert(BirdWatcher.EthTransferFailed.selector);
         watcher.withdrawEth(address(recipient), 1 wei);
+    }
+
+    function testWithdrawERC20TransfersTokens() public {
+        MockERC20 token = new MockERC20();
+        address recipient = address(0xBEEF);
+
+        token.mint(address(watcher), 100 ether);
+
+        vm.prank(OWNER);
+        watcher.withdrawERC20(address(token), recipient, 40 ether);
+
+        assertEq(token.balanceOf(recipient), 40 ether);
+        assertEq(token.balanceOf(address(watcher)), 60 ether);
+    }
+
+    function testWithdrawERC20RevertsUnlessOwner() public {
+        MockERC20 token = new MockERC20();
+
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, address(this)));
+        watcher.withdrawERC20(address(token), address(0xBEEF), 1);
+    }
+
+    function testWithdrawERC721TransfersToken() public {
+        MockERC721 nft = new MockERC721();
+        address recipient = address(0xBEEF);
+        uint256 tokenId = 42;
+
+        nft.mint(address(watcher), tokenId);
+
+        vm.prank(OWNER);
+        watcher.withdrawERC721(address(nft), recipient, tokenId);
+
+        assertEq(nft.ownerOf(tokenId), recipient);
+        assertEq(nft.balanceOf(address(watcher)), 0);
+        assertEq(nft.balanceOf(recipient), 1);
+    }
+
+    function testWithdrawERC721RevertsUnlessOwner() public {
+        MockERC721 nft = new MockERC721();
+
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, address(this)));
+        watcher.withdrawERC721(address(nft), address(0xBEEF), 1);
     }
 
     function testSupportsAutomationAndReceiverInterfaces() public view {

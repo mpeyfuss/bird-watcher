@@ -15,8 +15,11 @@ pragma solidity 0.8.30;
 import {AutomationBase} from "./lib/AutomationBase.sol";
 import {AutomationCompatibleInterface} from "./lib/AutomationCompatibleInterface.sol";
 import {IBirds, IBirdsObservations} from "./lib/BirdsInterfaces.sol";
+import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
+import {IERC721} from "@openzeppelin-contracts-5.6.1/token/ERC721/IERC721.sol";
 import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
 import {IERC1155Receiver, IERC165} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
+import {SafeERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/utils/SafeERC20.sol";
 import {Ownable} from "@openzeppelin-contracts-5.6.1/access/Ownable.sol";
 
 /// @title BirdWatcher
@@ -26,6 +29,8 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
     /////////////////////////////////////////////////////////////////////
     // TYPES
     /////////////////////////////////////////////////////////////////////
+
+    using SafeERC20 for IERC20;
 
     struct Observation {
         uint8 sanctuaryId;
@@ -100,6 +105,14 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
     {
         if (ids.length != amounts.length) revert ArrayLengthMismatch();
         IERC1155(nftAddress).safeBatchTransferFrom(address(this), recipient, ids, amounts, "");
+    }
+
+    function withdrawERC721(address nftAddress, address recipient, uint256 tokenId) external onlyOwner {
+        IERC721(nftAddress).safeTransferFrom(address(this), recipient, tokenId);
+    }
+
+    function withdrawERC20(address tokenAddress, address recipient, uint256 amount) external onlyOwner {
+        IERC20(tokenAddress).safeTransfer(recipient, amount);
     }
 
     function withdrawEth(address recipient, uint256 amount) external onlyOwner {
