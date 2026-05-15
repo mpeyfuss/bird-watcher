@@ -1,6 +1,6 @@
-# Birds Observation Bot
+# Bird Watcher
 
-An automated bird observation helper for the onchain Birds game.
+An automated bird observation contract for the onchain Birds project.
 
 `BirdWatcher` scans the active sanctuaries, finds the first observable bird that has not reached this contract's configured observation limit, and exposes the result through a Chainlink Automation-compatible `checkUpkeep` / `performUpkeep` flow.
 
