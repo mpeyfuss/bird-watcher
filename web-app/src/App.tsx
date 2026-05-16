@@ -82,9 +82,20 @@ function App() {
             every time a new bird/sanctuary combo pops up.
           </p>
           <p>
+            If you haven't spent time with{" "}
+            <a
+              href="https://birds.app"
+              target="_blank"
+              className="address-link"
+            >
+              Birds
+            </a>
+            , you should do that before deploying your own watcher.
+          </p>
+          <p>
             To run your own watcher you will deploy a BirdWatcher contract,
-            register an upkeep with Chainlink, fund both sides, and optionally
-            give it an identity. Connect a wallet to get started.
+            register an upkeep with Chainlink, fund both sides, and the watch it
+            go. Connect a wallet to get started.
           </p>
           <div className="action-row">
             <ConnectWalletButton />
