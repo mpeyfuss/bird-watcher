@@ -1,0 +1,264 @@
+body {
+  background: #0a0e0a;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  border-inline: none;
+  text-align: left;
+}
+
+.terminal {
+  --term-fg: #b5f5b5;
+  --term-fg-dim: #6ba36b;
+  --term-accent: #7dff7d;
+  --term-danger: #ff5f5f;
+  --term-danger-hover: #ffb3b3;
+  --term-bg: #0a0e0a;
+
+  font-family: var(--mono);
+  color: var(--term-fg);
+  background: var(--term-bg);
+  min-height: 100svh;
+  padding: 32px clamp(12px, 4vw, 48px) 96px;
+  box-sizing: border-box;
+  text-shadow: 0 0 2px rgba(125, 255, 125, 0.35);
+  overflow-x: hidden;
+}
+
+.banner {
+  color: var(--term-accent);
+  font-size: clamp(5px, 1.3vw, 12px);
+  line-height: 1.1;
+  margin: 0 0 24px;
+  white-space: pre;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.manual {
+  font-size: clamp(12px, 2.4vw, 14px);
+  line-height: 1.55;
+  color: var(--term-fg);
+  max-width: 980px;
+}
+
+.manual-title,
+.manual h2,
+.manual p,
+.manual ol {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: 0;
+}
+
+.manual-title {
+  padding-block: 8px;
+}
+
+.manual h2 {
+  padding-block: 4px;
+}
+
+.section-body {
+  display: grid;
+  gap: 20px;
+  padding-top: 24px;
+}
+
+.manual p {
+  max-width: 86ch;
+  overflow-wrap: break-word;
+}
+
+.step-list {
+  display: grid;
+  gap: 6px;
+  max-width: 86ch;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step-list li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr);
+  gap: 1ch;
+}
+
+.step-list li::before {
+  content: counter(step) ".";
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--term-fg-dim);
+  margin: 32px 0 8px;
+  height: 0;
+}
+
+.rule.tight {
+  margin-top: 8px;
+}
+
+.rule.double {
+  border-bottom: 1px solid var(--term-fg-dim);
+  height: 3px;
+}
+
+.cmd {
+  font: inherit;
+  color: var(--term-bg);
+  background: var(--term-accent);
+  border: none;
+  padding: 0 6px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-shadow: none;
+}
+
+.cmd:hover,
+.cmd:focus-visible {
+  background: var(--term-fg);
+  outline: none;
+}
+
+.cmd.danger {
+  background: var(--term-danger);
+}
+
+.cmd.danger:hover,
+.cmd.danger:focus-visible {
+  background: var(--term-danger-hover);
+}
+
+.cmd:disabled,
+.cmd:disabled:hover,
+.cmd:disabled:focus-visible {
+  background: var(--term-fg-dim);
+  cursor: not-allowed;
+}
+
+.field {
+  font: inherit;
+  background: transparent;
+  border: 1px solid var(--term-fg-dim);
+  color: var(--term-fg);
+  padding: 1px 6px;
+  outline: none;
+  text-shadow: inherit;
+}
+
+.field:focus {
+  border-color: var(--term-accent);
+}
+
+.field::placeholder {
+  color: var(--term-fg-dim);
+}
+
+.watcher-input .field {
+  flex: 1 1 28ch;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.watcher-panel,
+.deploy-status {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+
+.watcher-status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1ch;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.watcher-label {
+  color: var(--term-fg);
+}
+
+.watcher-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.address-link {
+  color: var(--term-fg);
+  text-decoration: underline;
+  text-decoration-color: var(--term-fg-dim);
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.address-link:hover,
+.address-link:focus-visible {
+  color: var(--term-accent);
+  outline: none;
+}
+
+.text-toggle {
+  font: inherit;
+  color: var(--term-fg-dim);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-shadow: inherit;
+}
+
+.advanced-toggle {
+  display: block;
+}
+
+.advanced-tools {
+  max-width: 100%;
+}
+
+.text-toggle:hover,
+.text-toggle:focus-visible {
+  color: var(--term-accent);
+  outline: none;
+}
+
+.copy-button {
+  font: inherit;
+  color: var(--term-fg-dim);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-shadow: inherit;
+}
+
+.copy-button:hover,
+.copy-button:focus-visible {
+  color: var(--term-fg);
+  outline: none;
+}
+
+.dim {
+  color: var(--term-fg-dim);
+}

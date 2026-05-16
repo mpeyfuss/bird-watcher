@@ -1,14 +1,19 @@
 # Bird Watcher
 
-An automated bird observation contract for the onchain Birds project.
+An automated bird observation contract for the onchain Birds project by [Jules](https://birds.app).
 
 `BirdWatcher` scans the active sanctuaries, finds the first observable bird that has not reached this contract's configured observation limit, and exposes the result through a Chainlink Automation-compatible `checkUpkeep` / `performUpkeep` flow.
 
-## Deployment
+The included web app is an open-source frontend for helping people deploy and configure their own `BirdWatcher`.
 
-| Contract | Address |
-| --- | --- |
-| `BirdWatcher` | `0xD6a421f752ada327D00606A0f2D8bFe6AcfE2476` |
+Disclaimer: these contracts and the web app are deployed as-is. Review the code and use them at your own risk.
+
+## Past Deployments
+
+| Contract | Address | Notes |
+| --- | --- | --- |
+| `BirdWatcher` | `0x7e5e5a30fbEe1Ef3EA75f28cBF80527715a41D14` | Latest deployment |
+| `BirdWatcher` | `0xD6a421f752ada327D00606A0f2D8bFe6AcfE2476` | Original deployment |
 
 The contract integrates with these deployed Birds contracts:
 
@@ -30,7 +35,7 @@ Default runtime settings:
 | Setting | Default |
 | --- | --- |
 | `maxFee` | `0.001 ether` |
-| `maxGasPrice` | `5 gwei` |
+| `maxGasPrice` | `2 gwei` |
 | `observationLimit` | `1` |
 | `OBSERVER_MIGRATION_COOLDOWN` | `10 seconds` |
 | `MAX_SANCTUARIES` | `10` |
@@ -43,7 +48,7 @@ The owner can:
 - Tune the maximum accepted observation fee with `setMaxFee`.
 - Tune the maximum accepted gas price with `setMaxGasPrice`.
 - Adjust per-bird observation limits with `setObservationLimit`.
-- Withdraw ETH and ERC-1155 tokens held by the watcher.
+- Withdraw ETH, ERC-20, ERC-721, and ERC-1155 tokens held by the watcher.
 
 ## Development
 
@@ -92,7 +97,7 @@ ETH_RPC_URL=<mainnet_rpc_url>
 Simulate the deployed watcher:
 
 ```sh
-BIRD_WATCHER_ADDRESS=0xD6a421f752ada327D00606A0f2D8bFe6AcfE2476 \
+BIRD_WATCHER_ADDRESS=0x7e5e5a30fbEe1Ef3EA75f28cBF80527715a41D14 \
 forge script script/SimulateMainnet.s.sol:SimulateMainnet --fork-url "$ETH_RPC_URL" -vvv
 ```
 

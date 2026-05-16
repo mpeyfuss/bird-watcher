@@ -64,6 +64,26 @@ contract RejectEth {
     }
 }
 
+error MockExecuteFailed(uint256 code);
+
+contract MockExecuteTarget {
+    address public caller;
+    uint256 public value;
+    uint256 public valueReceived;
+
+    function setValue(uint256 value_) external payable returns (uint256) {
+        caller = msg.sender;
+        value = value_;
+        valueReceived = msg.value;
+
+        return value_ + 1;
+    }
+
+    function fail() external pure {
+        revert MockExecuteFailed(42);
+    }
+}
+
 contract MockERC20 is ERC20 {
     constructor() ERC20("Mock Token", "MOCK") {}
 
@@ -284,6 +304,41 @@ contract BirdWatcherTest is Test {
         vm.prank(OWNER);
         vm.expectRevert(BirdWatcher.EthTransferFailed.selector);
         watcher.withdrawEth(address(recipient), 1 wei);
+    }
+
+    function testExecuteCallsTargetWithValueAndReturnsData() public {
+        MockExecuteTarget target = new MockExecuteTarget();
+        bytes memory data = abi.encodeCall(MockExecuteTarget.setValue, (42));
+
+        vm.expectEmit(true, false, false, false, address(watcher));
+        emit BirdWatcher.Executed(address(target));
+
+        vm.prank(OWNER);
+        bytes memory result = watcher.execute(address(target), 0.25 ether, data);
+
+        assertEq(abi.decode(result, (uint256)), 43);
+        assertEq(target.caller(), address(watcher));
+        assertEq(target.value(), 42);
+        assertEq(target.valueReceived(), 0.25 ether);
+        assertEq(address(watcher).balance, 0.75 ether);
+    }
+
+    function testExecuteRevertsUnlessOwner() public {
+        MockExecuteTarget target = new MockExecuteTarget();
+        bytes memory data = abi.encodeCall(MockExecuteTarget.setValue, (42));
+
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, address(this)));
+        watcher.execute(address(target), 0, data);
+    }
+
+    function testExecuteWrapsTargetRevertData() public {
+        MockExecuteTarget target = new MockExecuteTarget();
+        bytes memory data = abi.encodeCall(MockExecuteTarget.fail, ());
+        bytes memory revertData = abi.encodeWithSelector(MockExecuteFailed.selector, 42);
+
+        vm.prank(OWNER);
+        vm.expectRevert(abi.encodeWithSelector(BirdWatcher.ExecuteFailed.selector, revertData));
+        watcher.execute(address(target), 0, data);
     }
 
     function testWithdrawERC20TransfersTokens() public {

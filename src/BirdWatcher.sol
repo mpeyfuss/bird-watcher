@@ -57,6 +57,7 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
     // EVENTS
     /////////////////////////////////////////////////////////////////////
 
+    event Executed(address indexed target);
     event Observed(uint8 indexed sanctuaryId, uint8 indexed birdId);
 
     /////////////////////////////////////////////////////////////////////
@@ -65,6 +66,7 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
 
     error ArrayLengthMismatch();
     error EthTransferFailed();
+    error ExecuteFailed(bytes);
     error NotForwarder();
     error TooExpensive();
 
@@ -119,6 +121,18 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
     function withdrawEth(address recipient, uint256 amount) external onlyOwner {
         (bool success,) = recipient.call{value: amount}("");
         if (!success) revert EthTransferFailed();
+    }
+
+    function execute(address target, uint256 value, bytes calldata data)
+        external
+        payable
+        onlyOwner
+        returns (bytes memory result)
+    {
+        (bool success, bytes memory returndata) = target.call{value: value}(data);
+        if (!success) revert ExecuteFailed(returndata);
+        emit Executed(target);
+        return returndata;
     }
 
     /////////////////////////////////////////////////////////////////////
