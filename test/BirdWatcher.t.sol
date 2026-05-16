@@ -8,6 +8,7 @@ import {AutomationCompatibleInterface} from "../src/lib/AutomationCompatibleInte
 import {IBirds, IBirdsObservations} from "../src/lib/BirdsInterfaces.sol";
 import {ERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/ERC20.sol";
 import {ERC721} from "@openzeppelin-contracts-5.6.1/token/ERC721/ERC721.sol";
+import {IERC721Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC721/IERC721Receiver.sol";
 import {IERC1155Receiver, IERC165} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
 import {Ownable} from "@openzeppelin-contracts-5.6.1/access/Ownable.sol";
 
@@ -327,8 +328,24 @@ contract BirdWatcherTest is Test {
         watcher.withdrawERC721(address(nft), address(0xBEEF), 1);
     }
 
+    function testReceivesERC721SafeTransfer() public {
+        MockERC721 nft = new MockERC721();
+        address sender = address(0xCAFE);
+        uint256 tokenId = 42;
+
+        nft.mint(sender, tokenId);
+
+        vm.prank(sender);
+        nft.safeTransferFrom(sender, address(watcher), tokenId);
+
+        assertEq(nft.ownerOf(tokenId), address(watcher));
+        assertEq(nft.balanceOf(sender), 0);
+        assertEq(nft.balanceOf(address(watcher)), 1);
+    }
+
     function testSupportsAutomationAndReceiverInterfaces() public view {
         assertTrue(watcher.supportsInterface(type(IERC165).interfaceId));
+        assertTrue(watcher.supportsInterface(type(IERC721Receiver).interfaceId));
         assertTrue(watcher.supportsInterface(type(IERC1155Receiver).interfaceId));
         assertTrue(watcher.supportsInterface(type(AutomationCompatibleInterface).interfaceId));
         assertFalse(watcher.supportsInterface(0xffffffff));

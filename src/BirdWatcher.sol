@@ -17,6 +17,7 @@ import {AutomationCompatibleInterface} from "./lib/AutomationCompatibleInterface
 import {IBirds, IBirdsObservations} from "./lib/BirdsInterfaces.sol";
 import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin-contracts-5.6.1/token/ERC721/IERC721.sol";
+import {IERC721Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC721/IERC721Receiver.sol";
 import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
 import {IERC1155Receiver, IERC165} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
 import {SafeERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/utils/SafeERC20.sol";
@@ -25,7 +26,7 @@ import {Ownable} from "@openzeppelin-contracts-5.6.1/access/Ownable.sol";
 /// @title BirdWatcher
 /// @notice Chainlink automation compatible interface for observing birds
 /// @author mpeyfuss
-contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, IERC1155Receiver {
+contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, IERC721Receiver, IERC1155Receiver {
     /////////////////////////////////////////////////////////////////////
     // TYPES
     /////////////////////////////////////////////////////////////////////
@@ -156,6 +157,14 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
     }
 
     /////////////////////////////////////////////////////////////////////
+    // IERC721Receiver
+    /////////////////////////////////////////////////////////////////////
+
+    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
+
+    /////////////////////////////////////////////////////////////////////
     // IERC1155Receiver
     /////////////////////////////////////////////////////////////////////
 
@@ -176,7 +185,8 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
     /////////////////////////////////////////////////////////////////////
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return interfaceId == type(IERC165).interfaceId || interfaceId == type(IERC1155Receiver).interfaceId
+        return interfaceId == type(IERC165).interfaceId || interfaceId == type(IERC721Receiver).interfaceId
+            || interfaceId == type(IERC1155Receiver).interfaceId
             || interfaceId == type(AutomationCompatibleInterface).interfaceId;
     }
 
