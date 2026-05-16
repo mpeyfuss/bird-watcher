@@ -115,6 +115,10 @@ contract BirdWatcherTest is Test {
         watcher.checkUpkeep("");
     }
 
+    function testDefaultsToTwoGweiMaxGasPrice() public view {
+        assertEq(watcher.maxGasPrice(), 2 gwei);
+    }
+
     function testCheckUpkeepReturnsFalseWhenBirdsDeparted() public {
         birds.setBirdsDeparted(true);
         birds.setSanctuaryState(1, true, 42);
@@ -128,6 +132,16 @@ contract BirdWatcherTest is Test {
     function testCheckUpkeepReturnsFalseDuringMigrationCooldown() public {
         birds.setSanctuaryState(1, true, 42);
         birds.setEpochTimestamp(uint64(block.timestamp - watcher.OBSERVER_MIGRATION_COOLDOWN() + 1));
+
+        (bool upkeepNeeded, bytes memory performData) = _checkUpkeep();
+
+        assertFalse(upkeepNeeded);
+        assertEq(performData.length, 0);
+    }
+
+    function testCheckUpkeepReturnsFalseWhenBalanceIsBelowObservationFee() public {
+        birds.setSanctuaryState(1, true, 42);
+        vm.deal(address(watcher), birdObservations.observationFee() - 1);
 
         (bool upkeepNeeded, bytes memory performData) = _checkUpkeep();
 

@@ -48,7 +48,7 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
 
     address public forwarder;
     uint256 public maxFee = 0.001 ether;
-    uint256 public maxGasPrice = 5 gwei;
+    uint256 public maxGasPrice = 2 gwei;
     uint256 public observationLimit = 1;
     mapping(uint8 sanctuaryId => mapping(uint8 birdId => uint256)) public observationCounts;
 
@@ -135,6 +135,7 @@ contract BirdWatcher is Ownable, AutomationBase, AutomationCompatibleInterface, 
         IBirds birds = IBirds(BIRDS);
         if (birds.birdsDeparted()) return (false, "");
         if (block.timestamp < birds.epochTimestamp() + OBSERVER_MIGRATION_COOLDOWN) return (false, "");
+        if (address(this).balance < IBirdsObservations(BIRD_OBSERVATIONS).observationFee()) return (false, "");
 
         (bool observationPossible, Observation memory observation) = _getObservation();
         return (observationPossible, abi.encode(observation));
