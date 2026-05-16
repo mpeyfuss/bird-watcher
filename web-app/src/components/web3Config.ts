@@ -10,7 +10,7 @@ if (!projectId) {
 export const web3Config = getDefaultConfig({
   appName: "Bird Watcher",
   appDescription:
-    "An automated observation contract for the onchain Birds project, driven by Chainlink Automation.",
+    "An automated observation contract for Birds by Jules + Mungi, driven by Chainlink Automation.",
   projectId,
   chains: [mainnet],
   transports: {

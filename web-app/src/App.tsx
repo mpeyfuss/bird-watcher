@@ -61,14 +61,21 @@ function App() {
 
         <ManualSection title="WELCOME">
           <p>
-            Bird Watcher is an automated observation contract for the onchain
-            Birds project by{" "}
+            Bird Watcher is an automated observation contract for Birds by{" "}
             <a
               href="https://x.com/nicedayJules"
               target="_blank"
               className="address-link"
             >
               Jules
+            </a>{" "}
+            +{" "}
+            <a
+              href="https://x.com/mungimungimungi"
+              target="_blank"
+              className="address-link"
+            >
+              Mungi
             </a>
             . Once deployed and wired to Chainlink Automation, your watcher
             scans the active sanctuaries and observes the first eligible bird
@@ -202,6 +209,9 @@ function App() {
             </Button>
             <Button href="https://x.com/nicedayJules" external>
               jules
+            </Button>
+            <Button href="https://x.com/mungimungimungi" external>
+              mungi
             </Button>
           </div>
         </ManualSection>
