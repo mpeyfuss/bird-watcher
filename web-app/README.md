@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# Bird Watcher Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend for connecting a wallet and deploying a Bird Watcher contract.
 
-Currently, two official plugins are available:
+## Local Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Create a local env file:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+cp .env.example .env.local
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Then set:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```sh
+VITE_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Run the app:
+
+```sh
+npm install
+npm run dev
+```
+
+## Vercel Deployment
+
+The Vercel project should use `web-app` as its root directory. With that root,
+the default commands are:
+
+```sh
+npm run build
+```
+
+and:
+
+```sh
+dist
+```
+
+This app reads the WalletConnect project ID from `VITE_WALLETCONNECT_PROJECT_ID`.
+Because this is a Vite client-side app, the variable must:
+
+- Start with `VITE_`
+- Be configured in the Vercel project, not only in `.env.local`
+- Be available to the Vercel environment you are deploying, such as Production, Preview, or Development
+- Be present before the deployment build starts
+
+After adding or changing the variable in Vercel, redeploy the app. Vite bakes
+`VITE_*` variables into the static JavaScript bundle at build time, so changing
+the variable after a deployment does not update the already-built app.
+
+If the variable is missing, `npm run build` now fails with a clear error before
+Vercel publishes a broken build.
+
+## Scripts
+
+```sh
+npm run dev
+npm run build
+npm run lint
+npm run preview
 ```
