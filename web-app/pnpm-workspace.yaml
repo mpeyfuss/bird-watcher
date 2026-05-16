@@ -1,0 +1,9 @@
+allowBuilds:
+  bufferutil: true
+  keccak: true
+  utf-8-validate: true
+
+overrides:
+  qr: "0.5.5"
+
+minimumReleaseAge: 1440

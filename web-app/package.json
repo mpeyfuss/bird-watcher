@@ -1,5 +1,6 @@
 {
-  "name": "web-app",
+  "name": "bird-watcher-web-app",
+  "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,15 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@rainbow-me/rainbowkit": "2.2.11",
+    "@rainbow-me/rainbowkit": "2.2.10",
     "@tanstack/react-query": "5.100.9",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "viem": "2.48.11",
-    "wagmi": "2.19.5"
-  },
-  "overrides": {
-    "qr": "0.5.5"
+    "wagmi": "2.19.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -32,6 +30,6 @@
     "globals": "^17.6.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
+    "vite": "^8.0.11"
   }
 }
